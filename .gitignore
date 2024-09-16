@@ -1,0 +1,4 @@
+*.log
+secret_config.txt
+/temp/
+*.env
