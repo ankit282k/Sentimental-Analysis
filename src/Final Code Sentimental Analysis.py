@@ -15,6 +15,7 @@ import csv
 #nltk.download('wordnet')
 #nltk.download('punkt')
 
+#new changes
 curr_dic = os.getcwd()
 links = pd.read_excel(curr_dic+"/Input.xlsx")
 
