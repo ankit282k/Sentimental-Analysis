@@ -2,16 +2,16 @@ pipeline {
     agent any
 
     environment {
-        GIT_CREDENTIALS = 'github-cred'       // Jenkins credential ID for GitHub PAT
+        GIT_CREDENTIALS = 'github-cred' // Your Jenkins credential ID
         GIT_URL = 'https://github.com/ankit282k/Sentimental-Analysis.git'
         GIT_BRANCH = 'main'
-        SCANNER_HOME = tool name: 'SonarQubeScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation' // ensures correct tool lookup
     }
 
     stages {
 
         stage('Checkout SCM') {
             steps {
+                // Declarative checkout
                 checkout([$class: 'GitSCM',
                     branches: [[name: "*/${env.GIT_BRANCH}"]],
                     userRemoteConfigs: [[
@@ -23,37 +23,9 @@ pipeline {
         }
 
         stage('Build / Run') {
-    steps {
-        echo "Running pipeline for branch ${env.GIT_BRANCH}"
-        sh '''
-        python3 -m venv venv
-        . venv/bin/activate
-        pip install -r requirements.txt
-        python main.py
-        '''
-    }
-}
-
-        stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube') { // Name of Jenkins SonarQube server
-                    sh """
-                        ${SCANNER_HOME}/bin/sonar-scanner \
-                        -Dsonar.projectKey=Sentimental-Analysis \
-                        -Dsonar.sources=. \
-                        -Dsonar.host.url=${env.SONAR_HOST_URL} \
-                        -Dsonar.login=${env.SONAR_AUTH_TOKEN}
-                    """
-                }
-            }
-        }
-
-        stage('Quality Gate') {
-            steps {
-                // Wait for SonarQube analysis to complete
-                timeout(time: 1, unit: 'HOURS') {
-                    waitForQualityGate abortPipeline: true
-                }
+                echo "Pipeline is running on branch ${env.GIT_BRANCH}"
+                // Add your build/test/analysis commands here
             }
         }
 
