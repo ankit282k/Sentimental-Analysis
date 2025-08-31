@@ -23,17 +23,16 @@ pipeline {
         }
 
         stage('Build / Run') {
-            steps {
-                echo "Running pipeline for branch ${env.GIT_BRANCH}"
-                // Run Python environment setup and script
-                sh '''
-                python3 -m venv venv
-                source venv/bin/activate
-                pip install -r requirements.txt
-                python main.py
-                '''
-            }
-        }
+    steps {
+        echo "Running pipeline for branch ${env.GIT_BRANCH}"
+        sh '''
+        python3 -m venv venv
+        . venv/bin/activate
+        pip install -r requirements.txt
+        python main.py
+        '''
+    }
+}
 
         stage('SonarQube Analysis') {
             steps {
