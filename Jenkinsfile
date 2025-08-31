@@ -2,10 +2,10 @@ pipeline {
     agent any
 
     environment {
-        GIT_CREDENTIALS = 'github-cred'       // Your Jenkins credential ID
+        GIT_CREDENTIALS = 'github-cred'       // Jenkins credential ID for GitHub PAT
         GIT_URL = 'https://github.com/ankit282k/Sentimental-Analysis.git'
         GIT_BRANCH = 'main'
-        SCANNER_HOME = tool 'SonarQubeScanner' // Name from Global Tool Configuration
+        SCANNER_HOME = tool name: 'SonarQubeScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation' // ensures correct tool lookup
     }
 
     stages {
@@ -25,7 +25,7 @@ pipeline {
         stage('Build / Run') {
             steps {
                 echo "Running pipeline for branch ${env.GIT_BRANCH}"
-                // Example: run Python requirements or scripts
+                // Run Python environment setup and script
                 sh '''
                 python3 -m venv venv
                 source venv/bin/activate
@@ -37,12 +37,14 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube') { // Name of the Jenkins SonarQube server
-                    sh "${SCANNER_HOME}/bin/sonar-scanner \
+                withSonarQubeEnv('SonarQube') { // Name of Jenkins SonarQube server
+                    sh """
+                        ${SCANNER_HOME}/bin/sonar-scanner \
                         -Dsonar.projectKey=Sentimental-Analysis \
                         -Dsonar.sources=. \
                         -Dsonar.host.url=${env.SONAR_HOST_URL} \
-                        -Dsonar.login=${env.SONAR_AUTH_TOKEN}"
+                        -Dsonar.login=${env.SONAR_AUTH_TOKEN}
+                    """
                 }
             }
         }
