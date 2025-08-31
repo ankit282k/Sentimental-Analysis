@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        // No Maven needed, but we can install Python if configured in Jenkins
-    }
-
     stages {
         stage('Checkout') {
             steps {
@@ -16,7 +12,7 @@ pipeline {
             steps {
                 sh 'python3 --version'
                 sh 'pip install --upgrade pip'
-                // If you have requirements.txt, uncomment next line
+                // If you have dependencies:
                 // sh 'pip install -r requirements.txt'
             }
         }
@@ -24,13 +20,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('MySonarQubeServer') {
-                    sh '''
-                        sonar-scanner \
-                        -Dsonar.projectKey=my-python-project \
-                        -Dsonar.sources=. \
-                        -Dsonar.host.url=http://localhost:9000 \
-                        -Dsonar.login=$SONAR_AUTH_TOKEN
-                    '''
+                    sh 'sonar-scanner'
                 }
             }
         }
