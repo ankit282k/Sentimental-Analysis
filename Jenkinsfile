@@ -1,38 +1,12 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.10'
-        }
-    }
-
+    agent any
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
-            }
-        }
-
-        stage('Setup Python') {
-            steps {
-                sh 'python3 --version'
-                sh 'pip install --upgrade pip'
-                // sh 'pip install -r requirements.txt'
-            }
-        }
-
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('MySonarQubeServer') {
-                    sh 'sonar-scanner'
-                }
-            }
-        }
-
-        stage('Quality Gate') {
-            steps {
-                timeout(time: 1, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
-                }
+                git(
+                    url: 'https://github.com/ankit282k/Sentimental-Analysis.git',
+                    credentialsId: 'github-cred'
+                )
             }
         }
     }
